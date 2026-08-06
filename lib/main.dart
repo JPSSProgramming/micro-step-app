@@ -1,8 +1,7 @@
 import 'dart:math';
-
+import '../../../models/player_card.dart';
 import 'package:flutter/material.dart';
-import 'player_card.dart';
-import 'draft_screen.dart';
+import '../../../features/draft/screens/draft_screen.dart';
 
 void main() {
   runApp(const MyApp());

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'player_card.dart';
-import 'match_screen.dart';
+import '../../../models/player_card.dart';
+import '../../fatal/screens/match_screen.dart';
 
 class DraftScreen extends StatefulWidget {
   const DraftScreen({super.key});
