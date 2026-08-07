@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
 
 class AppColors {
-  // Основні кольори фону
   static const Color backgroundDark = Color(0xFF090D16);
   static const Color surfaceDark = Color(0xFF131A29);
   static const Color cardBorder = Color(0xFF1E293B);
 
-  // Валюти та статуси
   static const Color gold = Color(0xFFFFD700);
   static const Color lPoints = Color(0xFFFF7B00);
   static const Color cyan = Color(0xFF00E5FF);
