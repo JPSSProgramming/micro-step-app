@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import '../../../models/squad.dart';
 import '../../../models/player_card.dart';
-import '../../fatal/screens/match_screen.dart';
+import '../widgets/draft_pitch_grid.dart';
+import '../widgets/player_pick_sheet.dart';
 
 class DraftScreen extends StatefulWidget {
   const DraftScreen({super.key});
@@ -10,113 +12,103 @@ class DraftScreen extends StatefulWidget {
 }
 
 class _DraftScreenState extends State<DraftScreen> {
-  final List<String> positions = [
-    'LW', 'ST', 'RW',
-    'CM', 'CAM', 'CM',
-    'LB', 'CB', 'CB', 'RB',
-    'GK'
-  ];
+  DraftSquad? _squad;
 
-  final Map<int, PlayerCard> squad = {};
-
-  int get teamRating {
-    if (squad.isEmpty) return 0;
-    int sum = squad.values.fold(0, (prev, p) => prev + p.rating);
-    return (sum / squad.length).round();
-  }
-
-  int get teamChemistry {
-    if (squad.isEmpty) return 0;
-    int chem = 0;
-    squad.forEach((index, player) {
-      if (player.position == positions[index]) {
-        chem += 20;
-      } else {
-        chem += 10;
-      }
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _showFormationPicker();
     });
-    return chem.clamp(0, 100);
   }
 
-  void _openPlayerPicker(int index) {
-    final available = List<PlayerCard>.from(allPlayers)..shuffle();
-    final choices = available.take(3).toList();
+  void _showFormationPicker() {
+    showModalBottomSheet(
+      context: context,
+      isDismissible: false,
+      enableDrag: false,
+      isScrollControlled: true,
+      backgroundColor: const Color(0xFF131A29),
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+      builder: (context) {
+        return SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Text(
+                    'CHOOSE FORMATION',
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.cyanAccent,
+                      letterSpacing: 1.2,
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  ...availableFormations.map((formation) {
+                    return Card(
+                      color: Colors.white10,
+                      margin: const EdgeInsets.symmetric(vertical: 4),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: ListTile(
+                        dense: true,
+                        title: Text(
+                          formation.name,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                          ),
+                        ),
+                        subtitle: Text(
+                          formation.positions.join(' - '),
+                          style: const TextStyle(color: Colors.white54, fontSize: 11),
+                        ),
+                        trailing: const Icon(Icons.arrow_forward_ios, color: Colors.cyanAccent, size: 14),
+                        onTap: () {
+                          setState(() {
+                            _squad = DraftSquad(formation: formation);
+                          });
+                          Navigator.pop(context);
+                        },
+                      ),
+                    );
+                  }),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+  void _onSlotTap(int index) {
+    if (_squad == null) return;
+
+    final targetPosition = _squad!.formation.positions[index];
+
+    final shuffled = List<PlayerCard>.from(allPlayers)..shuffle();
+    final options = shuffled.take(5).toList();
 
     showModalBottomSheet(
       context: context,
-      backgroundColor: const Color(0xFF1E1E2C),
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
+      backgroundColor: Colors.transparent,
       builder: (context) {
-        return Container(
-          padding: const EdgeInsets.all(16),
-          height: 250,
-          child: Column(
-            children: [
-              Text(
-                'Select ${positions[index]}',
-                style: const TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.amber,
-                ),
-              ),
-              const SizedBox(height: 15),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: choices.map((player) {
-                  return GestureDetector(
-                    onTap: () {
-                      setState(() {
-                        squad[index] = player;
-                      });
-                      Navigator.pop(context);
-                    },
-                    child: Container(
-                      width: 100,
-                      padding: const EdgeInsets.all(10),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFFD4AF37),
-                        borderRadius: BorderRadius.circular(12),
-                        border: Border.all(color: Colors.amberAccent, width: 2),
-                      ),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text(
-                            '${player.rating}',
-                            style: const TextStyle(
-                              fontSize: 22,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.black,
-                            ),
-                          ),
-                          Text(
-                            player.position,
-                            style: const TextStyle(
-                              fontSize: 12,
-                              color: Colors.black87,
-                            ),
-                          ),
-                          const SizedBox(height: 5),
-                          Text(
-                            player.name,
-                            style: const TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.black,
-                            ),
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ],
-                      ),
-                    ),
-                  );
-                }).toList(),
-              ),
-            ],
-          ),
+        return PlayerPickSheet(
+          position: targetPosition,
+          options: options,
+          onSelect: (selectedPlayer) {
+            setState(() {
+              _squad!.startingPlayers[index] = selectedPlayer;
+            });
+          },
         );
       },
     );
@@ -125,141 +117,64 @@ class _DraftScreenState extends State<DraftScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF121212),
+      backgroundColor: const Color(0xFF090D16),
       appBar: AppBar(
-        title: const Text('DRAFT MODE (4-3-3)', style: TextStyle(fontWeight: FontWeight.bold)),
         backgroundColor: Colors.black54,
+        title: Text(
+          _squad != null ? 'DRAFT (${_squad!.formation.name})' : 'SELECT FORMATION',
+          style: const TextStyle(fontWeight: FontWeight.bold),
+        ),
         centerTitle: true,
-      ),
-      body: Column(
-        children: [
-          Container(
-            padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 20),
-            color: const Color(0xFF1E1E2C),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                Row(
-                  children: [
-                    const Icon(Icons.star, color: Colors.amber, size: 28),
-                    const SizedBox(width: 8),
-                    Text(
-                      'RATING: $teamRating',
-                      style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
-                    ),
-                  ],
-                ),
-                Row(
-                  children: [
-                    const Icon(Icons.bolt, color: Colors.greenAccent, size: 28),
-                    const SizedBox(width: 8),
-                    Text(
-                      'CHEM: $teamChemistry',
-                      style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
-                    ),
-                  ],
-                ),
-              ],
-            ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.refresh, color: Colors.cyanAccent),
+            onPressed: _showFormationPicker,
           ),
-
-          Expanded(
-            child: GridView.builder(
-              padding: const EdgeInsets.all(12),
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 3,
-                childAspectRatio: 0.8,
-                crossAxisSpacing: 10,
-                mainAxisSpacing: 10,
-              ),
-              itemCount: positions.length,
-              itemBuilder: (context, index) {
-                final pos = positions[index];
-                final player = squad[index];
-
-                return GestureDetector(
-                  onTap: () => _openPlayerPicker(index),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: player != null ? const Color(0xFFD4AF37) : const Color(0xFF2C2C3E),
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(
-                        color: player != null ? Colors.amberAccent : Colors.white12,
-                        width: 2,
-                      ),
-                    ),
-                    child: player != null
-                        ? Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          '${player.rating}',
-                          style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.black),
-                        ),
-                        Text(
-                          player.name,
-                          style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.black),
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                        Container(
-                          margin: const EdgeInsets.only(top: 4),
-                          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                          decoration: BoxDecoration(
-                            color: Colors.black26,
-                            borderRadius: BorderRadius.circular(4),
-                          ),
-                          child: Text(
-                            pos,
-                            style: const TextStyle(fontSize: 10, color: Colors.black, fontWeight: FontWeight.bold),
-                          ),
-                        ),
-                      ],
-                    )
-                        : Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const Icon(Icons.add_circle_outline, color: Colors.amber, size: 30),
-                        const SizedBox(height: 6),
-                        Text(
-                          pos,
-                          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white70),
-                        ),
-                      ],
-                    ),
-                  ),
-                );
-              },
-            ),
-          ),
-
-          if (squad.isNotEmpty)
-            Padding(
-              padding: const EdgeInsets.all(12.0),
-              child: ElevatedButton.icon(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => MatchScreen(
-                        teamRating: teamRating,
-                        teamChemistry: teamChemistry,
-                      ),
-                    ),
-                  );
-                },
-                icon: const Icon(Icons.play_arrow, color: Colors.black),
-                label: const Text(
-                  'PLAY MATCH',
-                  style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 18),
-                ),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.amber,
-                  minimumSize: const Size(double.infinity, 50),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                ),
-              ),
-            ),
         ],
+      ),
+      body: _squad == null
+          ? const Center(child: CircularProgressIndicator(color: Colors.cyanAccent))
+          : SafeArea(
+        child: SingleChildScrollView(
+          physics: const BouncingScrollPhysics(),
+          child: Column(
+            children: [
+              Container(
+                padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 20),
+                margin: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(0.05),
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(color: Colors.white10),
+                ),
+                child: const Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    Column(
+                      children: [
+                        Text('RATING', style: TextStyle(color: Colors.white54, fontSize: 10)),
+                        Text('185', style: TextStyle(color: Colors.amber, fontSize: 20, fontWeight: FontWeight.bold)),
+                      ],
+                    ),
+                    Column(
+                      children: [
+                        Text('CHEMISTRY', style: TextStyle(color: Colors.white54, fontSize: 10)),
+                        Text('33', style: TextStyle(color: Colors.greenAccent, fontSize: 20, fontWeight: FontWeight.bold)),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+              SizedBox(
+                height: MediaQuery.of(context).size.height * 0.72,
+                child: DraftPitchGrid(
+                  squad: _squad!,
+                  onSlotTap: _onSlotTap,
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
