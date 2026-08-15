@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../core/widgets/neon_card_tile.dart';
+import '../../fatal/screens/fatal_match_screen.dart';
 import '../../market/screens/transfer_market_screen.dart';
 
 class Page2Play extends StatelessWidget {
@@ -50,9 +51,9 @@ class Page2Play extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
-                    _buildFatalSubItem('MY CLUB', 'SERIES 0/7'),
-                    _buildFatalSubItem('SIM', 'SERIES 0/7'),
-                    _buildFatalSubItem('DRAFT', 'DIV 3'),
+                    _buildFatalSubItem(context, 'MY CLUB', 'SERIES 0/7'),
+                    _buildFatalSubItem(context, 'SIM', 'SERIES 0/7'),
+                    _buildFatalSubItem(context, 'DRAFT', 'DIV 3'),
                   ],
                 ),
               ],
@@ -108,13 +109,21 @@ class Page2Play extends StatelessWidget {
     );
   }
 
-  Widget _buildFatalSubItem(String title, String subtitle) {
-    return Column(
-      children: [
-        Text(title, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 14)),
-        const SizedBox(height: 2),
-        Text(subtitle, style: const TextStyle(color: Colors.white38, fontSize: 10)),
-      ],
+  Widget _buildFatalSubItem(BuildContext context, String title, String subtitle) {
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const FatalMatchScreen()),
+        );
+      },
+      child: Column(
+        children: [
+          Text(title, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 14)),
+          const SizedBox(height: 2),
+          Text(subtitle, style: const TextStyle(color: Colors.white38, fontSize: 10)),
+        ],
+      ),
     );
   }
 }
