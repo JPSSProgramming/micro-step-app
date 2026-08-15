@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../core/widgets/neon_card_tile.dart';
+import '../../market/screens/transfer_market_screen.dart';
 
 class Page2Play extends StatelessWidget {
   const Page2Play({super.key});
@@ -21,8 +22,7 @@ class Page2Play extends StatelessWidget {
               colors: [Colors.tealAccent, Colors.greenAccent],
             ),
             topWidget: const Icon(Icons.inventory_2_outlined, size: 50, color: Colors.tealAccent),
-            onTap: () {
-            },
+            onTap: () {},
           ),
           const SizedBox(height: 14),
 
@@ -79,7 +79,14 @@ class Page2Play extends StatelessWidget {
                       height: 90,
                       borderGradient: const LinearGradient(colors: [Colors.teal, Colors.blueAccent]),
                       topWidget: const Icon(Icons.swap_horiz, size: 36, color: Colors.tealAccent),
-                      onTap: () {},
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const TransferMarketScreen(),
+                          ),
+                        );
+                      },
                     ),
                   ],
                 ),
