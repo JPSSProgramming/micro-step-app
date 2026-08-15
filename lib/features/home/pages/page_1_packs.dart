@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import '../../../core/widgets/neon_card_tile.dart';
 import '../../draft/screens/draft_screen.dart';
-import '../../packs/screens/store_screen.dart';
 import '../../sbc/screens/sbc_list_screen.dart';
+import '../../store/screens/store_screen.dart';
+import '../../cards/screens/latest_cards_screen.dart';
+import '../../objectives/screens/objectives_screen.dart';
+import '../../collection/screens/my_collection_screen.dart';
 
 class Page1Packs extends StatelessWidget {
   const Page1Packs({super.key});
@@ -14,90 +17,99 @@ class Page1Packs extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
       child: Column(
         children: [
-          GestureDetector(
+          NeonCardTile(
+            title: 'Draft',
+            height: 140,
+            bgGradient: const LinearGradient(
+              colors: [Color(0xFF2C003E), Color(0xFF12001F)],
+            ),
+            borderGradient: const LinearGradient(
+              colors: [Colors.purpleAccent, Colors.pinkAccent],
+            ),
+            topWidget: const Text(
+              'Draft',
+              style: TextStyle(
+                fontSize: 36,
+                fontWeight: FontWeight.w900,
+                fontStyle: FontStyle.italic,
+                color: Colors.white,
+              ),
+            ),
             onTap: () {
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => const DraftScreen()),
               );
             },
-            child: Container(
-              height: 150,
-              width: double.infinity,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(20),
-                border: Border.all(color: Colors.purpleAccent.withOpacity(0.8), width: 2),
-                gradient: const LinearGradient(
-                  colors: [Color(0xFF2E004F), Color(0xFF120024)],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.purpleAccent.withOpacity(0.2),
-                    blurRadius: 12,
-                    spreadRadius: 2,
-                  ),
-                ],
-              ),
-              child: const Center(
-                child: Text(
-                  'Draft',
-                  style: TextStyle(
-                    fontSize: 46,
-                    fontWeight: FontWeight.w900,
-                    fontStyle: FontStyle.italic,
-                    color: Colors.white,
-                    letterSpacing: 2,
-                  ),
-                ),
-              ),
-            ),
           ),
-          const SizedBox(height: 14),
+          const SizedBox(height: 12),
 
           Row(
             children: [
               Expanded(
                 child: NeonCardTile(
                   title: 'Store',
+                  height: 120,
+                  borderGradient: const LinearGradient(
+                    colors: [Colors.cyanAccent, Colors.blueAccent],
+                  ),
                   topWidget: const Icon(Icons.shopping_bag_outlined, size: 40, color: Colors.cyanAccent),
-                  borderGradient: const LinearGradient(colors: [Colors.cyan, Colors.blue]),
                   onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => const StoreScreen()),
+                    );
                   },
                 ),
               ),
-              const SizedBox(width: 10),
+              const SizedBox(width: 12),
               Expanded(
                 child: NeonCardTile(
                   title: 'Latest Cards',
+                  height: 120,
+                  borderGradient: const LinearGradient(
+                    colors: [Colors.pinkAccent, Colors.purpleAccent],
+                  ),
                   topWidget: const Icon(Icons.style_outlined, size: 40, color: Colors.pinkAccent),
-                  borderGradient: const LinearGradient(colors: [Colors.pinkAccent, Colors.purpleAccent]),
                   onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => const LatestCardsScreen()),
+                    );
                   },
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 10),
+          const SizedBox(height: 12),
 
           Row(
             children: [
               Expanded(
                 child: NeonCardTile(
                   title: 'Objectives',
+                  height: 120,
+                  borderGradient: const LinearGradient(
+                    colors: [Colors.redAccent, Colors.orangeAccent],
+                  ),
                   topWidget: const Icon(Icons.emoji_events_outlined, size: 40, color: Colors.redAccent),
-                  borderGradient: const LinearGradient(colors: [Colors.redAccent, Colors.orangeAccent]),
                   onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => const ObjectivesScreen()),
+                    );
                   },
                 ),
               ),
-              const SizedBox(width: 10),
+              const SizedBox(width: 12),
               Expanded(
                 child: NeonCardTile(
                   title: 'SBC',
-                  topWidget: const Icon(Icons.workspace_premium_outlined, size: 40, color: Colors.amberAccent),
-                  borderGradient: const LinearGradient(colors: [Colors.amber, Colors.deepOrange]),
+                  height: 120,
+                  borderGradient: const LinearGradient(
+                    colors: [Colors.amber, Colors.orange],
+                  ),
+                  topWidget: const Icon(Icons.stars_outlined, size: 40, color: Colors.amberAccent),
                   onTap: () {
                     Navigator.push(
                       context,
@@ -108,16 +120,19 @@ class Page1Packs extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(height: 10),
+          const SizedBox(height: 12),
 
           NeonCardTile(
-            title: 'Store',
-            topWidget: const Icon(Icons.shopping_bag_outlined, size: 40, color: Colors.cyanAccent),
-            borderGradient: const LinearGradient(colors: [Colors.cyan, Colors.blue]),
+            title: 'My Collection',
+            height: 110,
+            borderGradient: const LinearGradient(
+              colors: [Colors.tealAccent, Colors.cyanAccent],
+            ),
+            topWidget: const Icon(Icons.collections_bookmark_outlined, size: 40, color: Colors.tealAccent),
             onTap: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => const StoreScreen()),
+                MaterialPageRoute(builder: (context) => const MyCollectionScreen()),
               );
             },
           ),
