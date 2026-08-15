@@ -28,7 +28,7 @@ class NeonCardTile extends StatelessWidget {
       onTap: onTap,
       child: Container(
         height: height,
-        padding: const EdgeInsets.all(1.5), // товщина рамки
+        padding: const EdgeInsets.all(1.5),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(16),
           gradient: borderGradient,

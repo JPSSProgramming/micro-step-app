@@ -34,7 +34,7 @@ class TopBarWidget extends StatelessWidget {
                     borderRadius: BorderRadius.circular(4),
                     border: Border.all(color: Colors.white24),
                     image: const DecorationImage(
-                      image: NetworkImage('https://flagcdn.com/w40/ua.png'), // Прапор України
+                      image: NetworkImage('https://flagcdn.com/w40/ua.png'),
                       fit: BoxFit.cover,
                     ),
                   ),
