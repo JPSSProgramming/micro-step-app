@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import '../../../models/squad.dart';
 import '../../../models/player_card.dart';
+import '../../../services/draft_calculator.dart';
 import '../widgets/draft_pitch_grid.dart';
 import '../widgets/player_pick_sheet.dart';
+import 'match_simulation_screen.dart';
 
 class DraftScreen extends StatefulWidget {
   const DraftScreen({super.key});
@@ -20,6 +22,11 @@ class _DraftScreenState extends State<DraftScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _showFormationPicker();
     });
+  }
+
+  bool get _isSquadComplete {
+    if (_squad == null) return false;
+    return _squad!.startingPlayers.values.every((player) => player != null);
   }
 
   void _showFormationPicker() {
@@ -89,11 +96,11 @@ class _DraftScreenState extends State<DraftScreen> {
       },
     );
   }
+
   void _onSlotTap(int index) {
     if (_squad == null) return;
 
     final targetPosition = _squad!.formation.positions[index];
-
     final shuffled = List<PlayerCard>.from(allPlayers)..shuffle();
     final options = shuffled.take(5).toList();
 
@@ -107,6 +114,8 @@ class _DraftScreenState extends State<DraftScreen> {
           onSelect: (selectedPlayer) {
             setState(() {
               _squad!.startingPlayers[index] = selectedPlayer;
+              _squad!.rating = DraftCalculator.calculateRating(_squad!);
+              _squad!.chemistry = DraftCalculator.calculateChemistry(_squad!);
             });
           },
         );
@@ -147,31 +156,60 @@ class _DraftScreenState extends State<DraftScreen> {
                   borderRadius: BorderRadius.circular(16),
                   border: Border.all(color: Colors.white10),
                 ),
-                child: const Row(
+                child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
                     Column(
                       children: [
-                        Text('RATING', style: TextStyle(color: Colors.white54, fontSize: 10)),
-                        Text('185', style: TextStyle(color: Colors.amber, fontSize: 20, fontWeight: FontWeight.bold)),
+                        const Text('RATING', style: TextStyle(color: Colors.white54, fontSize: 10)),
+                        Text(
+                          '${_squad!.rating}',
+                          style: const TextStyle(color: Colors.amber, fontSize: 20, fontWeight: FontWeight.bold),
+                        ),
                       ],
                     ),
                     Column(
                       children: [
-                        Text('CHEMISTRY', style: TextStyle(color: Colors.white54, fontSize: 10)),
-                        Text('33', style: TextStyle(color: Colors.greenAccent, fontSize: 20, fontWeight: FontWeight.bold)),
+                        const Text('CHEMISTRY', style: TextStyle(color: Colors.white54, fontSize: 10)),
+                        Text(
+                          '${_squad!.chemistry}',
+                          style: const TextStyle(color: Colors.greenAccent, fontSize: 20, fontWeight: FontWeight.bold),
+                        ),
                       ],
                     ),
                   ],
                 ),
               ),
               SizedBox(
-                height: MediaQuery.of(context).size.height * 0.72,
+                height: MediaQuery.of(context).size.height * 0.62,
                 child: DraftPitchGrid(
                   squad: _squad!,
                   onSlotTap: _onSlotTap,
                 ),
               ),
+              if (_isSquadComplete)
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.greenAccent,
+                      minimumSize: const Size(double.infinity, 50),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    ),
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => MatchSimulationScreen(squad: _squad!),
+                        ),
+                      );
+                    },
+                    child: const Text(
+                      'PLAY MATCH',
+                      style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 16),
+                    ),
+                  ),
+                ),
             ],
           ),
         ),
