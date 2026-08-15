@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../../core/widgets/neon_card_tile.dart';
 import '../../draft/screens/draft_screen.dart';
 import '../../packs/screens/store_screen.dart';
+import '../../sbc/screens/sbc_list_screen.dart';
 
 class Page1Packs extends StatelessWidget {
   const Page1Packs({super.key});
@@ -98,6 +99,10 @@ class Page1Packs extends StatelessWidget {
                   topWidget: const Icon(Icons.workspace_premium_outlined, size: 40, color: Colors.amberAccent),
                   borderGradient: const LinearGradient(colors: [Colors.amber, Colors.deepOrange]),
                   onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => const SBCListScreen()),
+                    );
                   },
                 ),
               ),
