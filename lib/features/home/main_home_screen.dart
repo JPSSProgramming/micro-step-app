@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../core/widgets/top_bar.dart';
+import '../profile/screens/profile_screen.dart';
 import 'pages/page_1_packs.dart';
 import 'pages/page_2_play.dart';
 import 'pages/page_3_club.dart';
@@ -21,7 +22,15 @@ class _MainHomeScreenState extends State<MainHomeScreen> {
       backgroundColor: const Color(0xFF090D16),
       body: Column(
         children: [
-          const TopBarWidget(),
+          GestureDetector(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const ProfileScreen()),
+              );
+            },
+            child: const TopBarWidget(),
+          ),
 
           Expanded(
             child: PageView(
