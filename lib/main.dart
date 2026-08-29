@@ -1,22 +1,32 @@
 import 'package:flutter/material.dart';
-import 'features/home/main_home_screen.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(const MicroStepApp());
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class MicroStepApp extends StatelessWidget {
+  const MicroStepApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      title: 'MicroStep',
       debugShowCheckedModeBanner: false,
-      title: 'MadFut Clone',
-      theme: ThemeData.dark().copyWith(
-        scaffoldBackgroundColor: const Color(0xFF090D16),
+      theme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: Colors.deepPurple,
+          brightness: Brightness.dark,
+        ),
+        useMaterial3: true,
       ),
-      home: const MainHomeScreen(),
+      home: const Scaffold(
+        body: Center(
+          child: Text(
+            'MicroStep App',
+            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+          ),
+        ),
+      ),
     );
   }
 }
