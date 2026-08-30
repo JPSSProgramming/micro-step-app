@@ -1,7 +1,13 @@
 import 'package:flutter/material.dart';
-
+import 'package:provider/provider.dart';
+import 'features/goals/providers/goal_provider.dart';
 void main() {
-  runApp(const MicroStepApp());
+  runApp(
+    ChangeNotifierProvider(
+      create: (_) => GoalProvider(),
+      child: const MicroStepApp(),
+    ),
+  );
 }
 
 class MicroStepApp extends StatelessWidget {
