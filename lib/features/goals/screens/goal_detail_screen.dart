@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../models/micro_step_model.dart';
 import '../providers/goal_provider.dart';
+import 'focus_timer_screen.dart';
 
 class GoalDetailScreen extends StatelessWidget {
   final String goalId;
@@ -122,6 +123,24 @@ class GoalDetailScreen extends StatelessWidget {
                       ),
                       subtitle: Text('${step.estimatedMinutes} хв'),
                       value: step.isCompleted,
+                      secondary: IconButton(
+                        icon: const Icon(
+                          Icons.timer_outlined,
+                          color: Colors.deepPurpleAccent,
+                        ),
+                        onPressed: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) => FocusTimerScreen(
+                                goalId: goal.id,
+                                stepId: step.id,
+                                stepTitle: step.title,
+                                minutes: step.estimatedMinutes,
+                              ),
+                            ),
+                          );
+                        },
+                      ),
                       onChanged: (_) {
                         goalProvider.toggleStepCompletion(goal.id, step.id);
                       },
