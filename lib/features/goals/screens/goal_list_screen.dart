@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '../models/goal_model.dart';
 import '../models/micro_step_model.dart';
 import '../providers/goal_provider.dart';
+import 'goal_detail_screen.dart';
 
 class GoalListScreen extends StatelessWidget {
   const GoalListScreen({super.key});
@@ -42,7 +43,7 @@ class GoalListScreen extends StatelessWidget {
                   description: descriptionController.text.trim(),
                   steps: [
                     MicroStep(
-                      id: '1',
+                      id: DateTime.now().millisecondsSinceEpoch.toString(),
                       title: 'Перший 5-хвилинний крок',
                     ),
                   ],
@@ -87,6 +88,13 @@ class GoalListScreen extends StatelessWidget {
               return Card(
                 margin: const EdgeInsets.only(bottom: 12),
                 child: ListTile(
+                  onTap: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => GoalDetailScreen(goalId: goal.id),
+                      ),
+                    );
+                  },
                   title: Text(
                     goal.title,
                     style: const TextStyle(fontWeight: FontWeight.bold),
