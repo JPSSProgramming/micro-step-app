@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'features/goals/providers/goal_provider.dart';
+import 'features/goals/screens/goal_list_screen.dart';
+
 void main() {
   runApp(
     ChangeNotifierProvider(
@@ -25,14 +27,7 @@ class MicroStepApp extends StatelessWidget {
         ),
         useMaterial3: true,
       ),
-      home: const Scaffold(
-        body: Center(
-          child: Text(
-            'MicroStep App',
-            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-          ),
-        ),
-      ),
+      home: const GoalListScreen(),
     );
   }
 }
